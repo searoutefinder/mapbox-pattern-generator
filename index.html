@@ -1,0 +1,118 @@
+<html>
+    <head>
+      <title>Mapbox GL Custom Fill Patterns</title>
+      <style type="text/css">
+        body { margin: 0; padding: 0; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; }
+      </style>
+      <script src="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.js"></script>
+      <link rel="stylesheet" href="https://api.mapbox.com/mapbox-gl-js/v3.12.0/mapbox-gl.css"></link>
+      <script src="mapboxPatternGenerator.js"></script>
+    </head>
+    <body>
+      <div id="map"></div>
+      <script>
+        mapboxgl.accessToken = "<your mapbox public token>"
+
+        const map = new mapboxgl.Map({
+          "container": "map",
+          "center": [-77.1945, 41.2033],
+          "zoom": 6,
+          "projection": "mercator"
+        })
+
+        let geojson = {
+          "type": "FeatureCollection",
+          "features": [
+            {
+            "type": "Feature",
+            "properties": { "state": "Ohio", "count": 450 },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-82.7937, 40.3736]
+            }
+            },
+            {
+            "type": "Feature",
+            "properties": { "state": "New York", "count": 600 },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-75.2170, 42.9530]
+            }
+            },
+            {
+            "type": "Feature",
+            "properties": { "state": "Pennsylvania", "count": 125 },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-77.6000, 40.9000]
+            }
+            },
+            {
+            "type": "Feature",
+            "properties": { "state": "West Virginia", "count": 245 },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [-80.7126, 38.6411]
+            }
+            }
+          ]
+        }
+
+        map.on("load", async () => {
+
+          // Generate and add patterns  
+          await generateNamedPattern(map, "diagonal_l", {"backgroundColor": "#34eb46", "lineColor": "#0d00ff", "pattern": "diagonalLeft"})
+          await generateNamedPattern(map, "diagonal_r", {"backgroundColor": "#FF0000", "lineColor": "#0d00ff", "pattern": "diagonalRight"})
+          await generateNamedPattern(map, "horizontal", {"backgroundColor": "#FF0000", "lineColor": "#0d00ff", "pattern": "horizontal"})
+          await generateNamedPattern(map, "vertical", {"backgroundColor": "#FF0000", "lineColor": "#0d00ff", "pattern": "vertical"})
+          await generateNamedPattern(map, "red", {"backgroundColor": "#34eb46"})
+          await generateNamedPattern(map, "blue", {"backgroundColor": "#0d00ff"})  
+          await generateNamedPattern(map, "empty", {})  
+
+          // Add sources
+          map.addSource("test-src", { "type": "geojson", "data": "https://ezmapdesign.com/demos/aces/US_20m.json" })
+          map.addSource("count-src", { "type": "geojson", "data": geojson })
+  
+          // Add layers
+          map.addLayer({
+            "id": "test-lyr",
+            "type": "fill",
+            "source": "test-src",
+            "filter": ["in", ["get", "STATE"], ["literal", ["39","42","36","54", "24", "34"]]],
+            "paint": {
+            "fill-pattern": [
+            "case", 
+              ["==", ["get", "STATE"], "39"], "red",
+              ["==", ["get", "STATE"], "42"], "diagonal_l",
+              ["==", ["get", "STATE"], "36"], "blue",
+              ["==", ["get", "STATE"], "54"], "red",
+              ["==", ["get", "STATE"], "24"], "blue",
+              ["==", ["get", "STATE"], "34"], "blue",
+              ["==", ["get", "STATE"], "10"], "blue",
+              "empty"
+            ],
+            "fill-opacity": 0.6,
+            "fill-outline-color": "#000"
+            }
+          })
+
+          map.addLayer({
+            "id": "count-lyr",
+            "type": "symbol",
+            "source": "count-src",
+            "layout": {
+              "text-field": ['get', 'count'],
+              "text-size": 14,
+              "text-letter-spacing": 0.25    
+            },
+            "paint": {
+              "text-color": '#000',
+              "text-halo-color": '#fff',
+              "text-halo-width": 2    
+            }
+          })
+        })
+       </script>
+    </body>
+</html>
