@@ -1,4 +1,4 @@
-# 📙 Create custom, dynamic fill patterns in Mapbox GL JS using the Canvas API
+# 📙 Mapbox Pattern Generator - Create custom, dynamic fill patterns in Mapbox GL JS using the Canvas API
 
 This repository demonstrates how to use the `generateNamedPattern` utility to create and register custom canvas-based fill patterns for Mapbox GL JS vector layers.
 
