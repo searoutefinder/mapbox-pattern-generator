@@ -121,4 +121,4 @@ MIT License. Free to use and modify.
 
 ## 👤 Author
 
-Created by \[Your Name or GitHub handle]. Contributions welcome!
+Created by [Tamas Hajdu](https://ezmapdesign.com). Contributions welcome!
